@@ -1,0 +1,26 @@
+Used Library List:
+    1. nodemon for auto restart the server
+    2. express
+    3. nodemailer for sending mail
+    4. bootstrap for UI development
+    5. ejs is an view engine
+    6. jsonwebtoken
+    7. dotenv to handle environment variable
+     8.font-awesome for icons
+     9. cryptr for encrypt and decrypt
+     10. cookie-parser to manage cookies
+    11. mysql to connect database
+    11. cors for port error while using on same pc
+12. jquery
+13. confirm-jquery
+14 winston for logging
+15. express-session to handle session
+16. morgan for request log
+17. datatables for html table
+18. select2 for select search
+19.  jquery-toast-plugin  for toast message
+20. zebra_datepicker 
+npm install dateformat
+Image by <a href="https://pixabay.com/users/clker-free-vector-images-3736/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=24366">Clker-Free-Vector-Images</a> from <a href="https://pixabay.com//?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=24366">Pixabay</a>
+
+ console.log(require('crypto').randomBytes(32).toString('hex'))
