@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fix Journey - Bus Booking System</title>
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="/base-css/left-navebar.css" />
+  <link rel="stylesheet" href="/jquery-confirm/dist/jquery-confirm.min.css" />
+  <link rel="stylesheet" href="/toast/jquery.toast.min.css" />
+  <link rel="stylesheet" href="/select2/css/select2.min.css" />
+  <link rel="stylesheet" href="/base-css/base.css" />
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <style>
+      body {
+      background-color: whitesmoke;
+      } 
+  </style>
+</head>
+<body>
+<div id="loading">
+    <img id="loading-image" src="/images/loader.gif" alt="Loading..." />
+</div>
+<div class="container-fluid min-vh-100 d-flex flex-column">
+    <div class="row flex-grow-1">
+      <div class="col-md-2" style="padding:0px;">
+          <div class="left-navebar">
+          </div>
+      </div>
+      <div class="col-md-10 " >
+          <div style="margin-top: 10px;">
+            <span style="font-size: 1.75rem;font-weight: bold;"> Fix Journey</span>
+            <div class="float-end" style="margin-top: 10px;">
+                <select class="form-control select2" style="width: 300px;" id="busid">
+                  <option selected disabled value="">Select The Bus</option>
+                  <% let val=busData;  for(let i=0; i<Object.keys(val).length;i++){ %>
+                  <option value="<%=val[i].BUSID%>"><%=val[i].BUSID%> (<%=val[i].TOTAL_SEAT%>)</option>
+                  <%}%>
+                </select>
+            </div>
+          </div>
+          <hr>
+          <center>
+            <div style="width: 65%;">
+                <table class="table table-striped  table-bordered  table-hover" id="fixJourneyTable">
+                  <thead class="thead-light">
+                      <tr>
+                        <th scope="col" style="width: 40%;">Station</th>
+                        <th scope="col" >Date</th>
+                        <th scope="col"  style="width: 100px">Cost</th>
+                        <th scope="col" style="width: 70px;">Action</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                        <td>
+                            <input type="hidden" value="1" name="rowCount">
+                            <select class="form-control select2 city" name="city" id="city_1" required>
+                              <option selected disabled value="">Select the city</option>
+                              <%  val2=cityData;  for(let i=0; i<Object.keys(val2).length;i++){ %>
+                              <option value="<%=val2[i].CITY_ID%>"><%=val2[i].CITY_NAME%></option>
+                              <%}%>
+                            </select>
+                        </td>
+                        <td><input class="form-control" name="date" id="date_1"  min="2023-01-01"  max="2099-06-08" type="datetime-local" required></td>
+                        <td><input class="form-control" name="cpp" id="cpp_1"  min="1" type="number" maxlength="3" required value="0" ></td>
+                        <td style="text-align: center;"><button class="btn btn-primary btn-sm" onclick="addRow()"><i class="fa fa-plus" aria-hidden="true"></i></button></td>
+                      </tr>
+                  </tbody>
+                </table>
+                <button class="btn btn-success" onclick="saveJourney()">Save</button>
+            </div>
+          </center>
+      </div>
+    </div>
+</div>
+<script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/base-js/base.js"> </script>
+<script type="text/javascript"  src="/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript"  src="/jquery-confirm/dist/jquery-confirm.min.js"></script> 
+<script type="text/javascript" src="/select2/js/select2.min.js"></script> 
+<script type="text/javascript" src="/toast/jquery.toast.min.js"></script>
+<script type="text/javascript">      
+window.cityArray = [];
+$(document).ready(function () {
+    $.ajax({
+        url: "/nave_bar",
+        type: "POST",
+        dataType: "html",
+        success: function (data) {
+            $(".left-navebar").html(data);
+            loadCityArray();
+            $("#loading").fadeOut("slow");
+        },
+    });
+    $(".select2").select2();
+    $("select[name=city]").on("select2:select", function (e) {
+        routeValidate(1, this);
+    });
+
+    let dateInput = document.getElementById("date_1");
+    dateInput.min = new Date().toISOString().slice(0, new Date().toISOString().lastIndexOf(":"));
+});
+
+function loadCityArray() {
+    $.ajax({
+        url: "/nave_bar",
+        type: "POST",
+        dataType: "html",
+        success: function (json_data) {
+            if (Object.keys(json_data).length > 0) {
+                for (var i in json_data) cityArray.push([i, json_data[i]]);
+            } else {
+                window.cityArray = [];
+            }
+        },
+    });
+}
+
+function addRow() {
+    var add_row = "";
+    var result1 = JSON.parse('<%-JSON.stringify(cityData)%>');
+    var option_val = [];
+    for (var i = 0; i < result1.length; i++) {
+        option_attr = '<option value= "' + result1[i]["CITY_ID"] + '">' + result1[i]["CITY_NAME"] + "</option>";
+        option_val.push(option_attr);
+    }
+    var len = $("#fixJourneyTable tr").length;
+    for (let e = 1; e <= len; e++) {
+        $("#min_" + e).hide();
+    }
+    len = len + 1;
+    let htmlStr =
+        '<tr id="fjtRow_' +
+        len +
+        '">' +
+        '<td> <input type="hidden" value="' +
+        len +
+        '" name="rowCount">' +
+        '<select  class="form-control jsSelect2 city" name="city" id="city_' +
+        len +
+        '" required><option selected disabled value="">Select the city</option>' +
+        option_val +
+        "</select></td>" +
+        '<td><input class="form-control" name="date" id="date_' +
+        len +
+        '" type="datetime-local" required></td>' +
+        '<td><input class="form-control" name="cpp" id="cpp_' +
+        len +
+        '"  min="1" type="number" maxlength="3" required value="0" ></td>' +
+        '<td style="text-align: center;"><button class="btn btn-warning btn-sm" id="min_' +
+        len +
+        '" onclick="removeRow()"><i class="fa fa-minus" aria-hidden="true"></i></button></td>' +
+        "</tr>";
+
+    $("#fixJourneyTable").append(htmlStr);
+    $(".jsSelect2").select2();
+    $("select[name=city]").on("select2:select", function (e) {
+        routeValidate(len, this);
+    });
+
+    let dateInput = document.getElementById("date_" + len);
+    dateInput.min = new Date().toISOString().slice(0, new Date().toISOString().lastIndexOf(":"));
+}
+
+function routeValidate(id, e) { //function to validate the city route
+    var lockPreviousCity = false;
+    let curCity = $(e).val();
+    var cityArray = new Array();
+    $("select[name=city]").each(function () {
+        cityArray.push($(this).val());
+    });
+
+    for (let i = 0; i <= cityArray.length - 1; i++) {
+        if (cityArray[i] == "" || cityArray[i] == null) continue;
+        if (cityArray[i] == cityArray[i + 1]) {
+            lockPreviousCity = true;
+            break;
+    }}
+
+    if (lockPreviousCity) {
+        $(e).val("").trigger("change");
+        sm_warning2("Please don't select the previous city!");
+        return;
+    }
+}
+
+function removeRow() {
+    var len = $("#fixJourneyTable tr").length;
+    if (len == 1) return;
+    $("#min_" + (len - 1)).show();
+    $("#date_" + (len - 1)).prop("readonly", false);
+    $("#fjtRow_" + len).remove();
+}
+
+function saveJourney() { //function to validate and save the journey data
+    var cityArray = new Array();
+    $("select[name=city]").each(function () {
+        cityArray.push($(this).val());
+    });
+    var dateArray = new Array();
+    $("input[name=date").each(function () {
+        dateArray.push($(this).val());
+    });
+    for (let k = 0; k < dateArray.length; k++) {
+        if (dateArray[k] > dateArray[k + 1]) {
+            sm_warning2("The you entered invalid date");
+            return;
+    }}
+    var cppArray = new Array();
+    $("input[name=cpp").each(function () {
+        cppArray.push($(this).val());
+    });
+    var busid = $("#busid").val();
+
+    for (let i = 0; i < cityArray.length; i++) {
+        if (cityArray[i] == "" || cityArray[i] == 0 || cityArray[i] == null || dateArray[i] == "" || dateArray[i] == 0 || dateArray[i] == null || cppArray[i] == null || busid == "" || busid == 0 || busid == null) {
+            sm_warning2("Kindly enter the all field!");
+            return;
+    }}
+
+    if (cityArray.length == 1) {
+        sm_warning2("Please add the final city!");
+        return;
+    }
+
+    //calling ajax to insert the data
+    $("#loading2").show(); 
+    $.ajax({
+        url: "/admin/addJourney",
+        type: "POST",
+        dataType: "html",
+        data: {
+            busid: busid,
+            date: dateArray,
+            city: cityArray,
+            cpp: cppArray,
+        },
+        success: function (data) {
+            if (data == 1) {
+                sm_success2("Successfully saved!");
+            } else {
+                sm_warning2("Something went wrong!");
+            }
+            $("#loading2").hide();
+        },
+    });
+}
+    </script>
+  </body>
+</html>

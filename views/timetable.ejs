@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Time Table - Bus Booking System</title>
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="/base-css/left-navebar.css" />
+  <link rel="stylesheet" href="/jquery-confirm/dist/jquery-confirm.min.css" />
+  <link rel="stylesheet" href="/datatables/css/jquery.dataTables.min.css" />
+  <link rel="stylesheet" href="/base-css/base.css" />
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <style>
+    body {
+      background-color: whitesmoke;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loading">
+    <img id="loading-image" src="/images/loader.gif" alt="Loading..." />
+  </div>
+  <div class="container-fluid min-vh-100 d-flex flex-column">
+    <div class="row flex-grow-1">
+      <div class="col-md-2" style="padding:0px;">
+        <div class="left-navebar">
+        </div>
+      </div>
+      <div class="col-md-10 ">
+        <h3>Timetable
+        </h3>
+        <hr>
+        <center>
+          <div style="width: 92%;">
+            <table class="table table-striped  table-bordered  table-hover">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">Bus Id</th>
+                  <th scope="col">Time</th>
+                  <th scope="col">From</th>
+                  <th scope="col">To</th>
+                  <th scope="col">Booked</th>
+                  <th scope="col">Available</th>
+                  <th scope="col">CPP</th>
+                  <th scope="col">Revenue</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% let val=data;  for(let i=0; i<Object.keys(val).length;i++){ %>
+                <tr>
+                  <td><%=val[i].BUSID%></td>
+                  <td><%=val[i].JOURNEY_DATE%></td>
+                  <td><%=val[i].FROM_CITY%></td>
+                  <td><%=val[i].TO_CITY%></td>
+                  <td><%=val[i].BOOK_COUNT%></td>
+                  <td><%=val[i].AVAILABLE%></td>
+                  <td><%=val[i].COST%></td>
+                  <td><%=val[i].REVENUE%></td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </center>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/base-js/base.js"> </script>
+  <script type="text/javascript" src="/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="/jquery-confirm/dist/jquery-confirm.min.js"></script>
+  <script type="text/javascript" src="/datatables/js/jquery.dataTables.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("table").DataTable({
+        dom: "Bfrtip",
+        iDisplayLength: 12,
+      });
+      $.ajax({
+        url: "/nave_bar",
+        type: "POST",
+        dataType: "html",
+        success: function (data) {
+          $(".left-navebar").html(data);
+          $("#loading").fadeOut("slow");
+        },
+      });
+    });
+  </script>
+</body>
+
+</html>

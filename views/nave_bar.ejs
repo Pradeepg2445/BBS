@@ -1,0 +1,29 @@
+<div class="container text-center" style="border-bottom: 1px solid gray; padding: 13px !important;"><i class="fa fa-bus fa-2x"></i>&ensp;<span style="font-size: 2rem;">BBS</span>   </div>  
+<a href="/profile" style="text-decoration: none;color:white;"><div class="container text-center" style=" margin-top: 15px !important"><i class="fa fa-user-circle fa-5x" aria-hidden="true"></i></div>
+<div class="container text-center" style="margin-top:3px;font-weight: bold; margin-bottom: 13px;"> <%=username%></div></a>
+
+  <div class="container text-center"> <a href="/"><button class="nave-button <%if(url=='/' ){%>active<%}%>"><i class="fa fa-home"></i>&ensp;Home</button></a></div>
+  
+  <%  if(isAdmin=='A'){%>
+  <div class="container text-center"> <a href="/dashboard"><button class="nave-button <%if(url=='/dashboard'){%>active<%}%>"><i class="fa fa-tachometer" aria-hidden="true"></i>&ensp;Dashboard</button></a></div>
+  <div class="container text-center"> <a href="/city_details"><button class="nave-button <%if(url=='/city_details'){%>active<%}%>"><i class="fa fa-map-marker"></i>&ensp;City Details</button></a></div>
+  <div class="container text-center"> <a href="/bus_details"><button class="nave-button <%if(url=='/bus_details'){%>active<%}%>"><i class="fa fa-bus"></i>&ensp;Bus Details</button></a></div>
+  <div class="container text-center"> <a href="/fix_journey"><button class="nave-button <%if(url=='/fix_journey'){%>active<%}%>"><i class="fa fa-map"></i>&ensp;Fix Journey</button></a></div>
+  <div class="container text-center"> <a href="/timetable"><button class="nave-button <%if(url=='/timetable'){%>active<%}%>"><i class="fa fa-table"></i>&ensp;Timetable</button></a></div>
+  <div class="container text-center"> <a href="/passenger"><button class="nave-button <%if(url=='/passenger'){%>active<%}%>"><i class="fa fa-address-card"></i>&ensp;Passenger</button></a></div>
+  <div class="container text-center"> <a href="/user_details"><button class="nave-button <%if(url=='/user_details'){%>active<%}%>"><i class="fa fa-user-circle-o"></i>&ensp;User Details</button></a></div>
+   
+  <% }else{%>
+  <div class="container text-center"> <a href="/my_bookings"><button class="nave-button <%if(url=='/my_bookings'){%>active<%}%>"><i class="fa fa-bookmark"></i>&ensp;My Bookings</button></a></div>
+  <div class="container text-center"> <a href="/contact_us"><button class="nave-button <%if(url=='/contact_us'){%>active<%}%>"><i class="fa fa-phone-square" aria-hidden="true"></i>&ensp;Contact Us</button></a></div>
+  
+  <% } if(login==1){%>
+ 
+    <div class="container text-center"> <a href="/logout"><button class="nave-button"><i class="fa fa-sign-out" aria-hidden="true"></i>&ensp;Logout</button></a></div>
+ 
+  <%} else{%>
+    <div class="container text-center"> <a href="/login"><button class="nave-button"><i class="fa fa-sign-out" aria-hidden="true"></i>&ensp;Login</button></a></div>
+    <div class="container text-center"> <a href="/signup"><button class="nave-button"><i class="fa fa-user-plus" aria-hidden="true"></i>&ensp;Signup</button></a></div>
+ 
+  <%}%>
+ 

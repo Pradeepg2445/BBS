@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Contact Us - Bus Booking System</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="/base-css/left-navebar.css" />
+    <link rel="stylesheet" href="/jquery-confirm/dist/jquery-confirm.min.css" />
+    
+    <link rel="stylesheet" href="/base-css/base.css" />
+    
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <style>
+      body {
+        background-color: whitesmoke;
+      } 
+      .contactInput{
+        margin-top: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading">
+      <img id="loading-image" src="/images/loader.gif" alt="Loading..." />
+    </div>
+    <div class="container-fluid min-vh-100 d-flex flex-column">     
+        <div class="row flex-grow-1">
+            <div class="col-md-2" style="padding:0px;">
+                <div class="left-navebar">
+                  
+            </div>
+          </div>
+            <div class="col-md-10 ">
+             
+             <br>
+<div class="container">
+  <h2>Contact Us</h2>
+  <p>Please feel free to contact us. We are here to answer your qustions and clear your doubts.</p>
+  <form>
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" class="form-control" placeholder="Enter Your Email" id="email" required>
+    </div>
+    <div class="form-group contactInput">
+      <label for="subj">Subject:</label>
+      <input type="text" maxlength="20" class="form-control" placeholder="Enter The Subject" id="subj" required>
+    </div>
+    <div class="form-group contactInput">
+      <label for="comment">Comment:</label>
+      <textarea class="form-control" rows="5" id="comment" placeholder="Enter Your Comment..." maxlength="100" required></textarea>
+    </div>
+    <div class="form-group contactInput">
+    <button type="button" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> Send</button>  
+    </div>
+  </form>
+  <br>
+</div>
+            </div>
+        </div>
+    </div>
+    
+    <script language="javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+    <script language="javascript" src="/base-js/base.js"> </script>
+    <script type="text/javascript"  src="/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript"  src="/jquery-confirm/dist/jquery-confirm.min.js"></script>
+    <script> 
+    // A $( document ).ready() block.
+$( document ).ready(function() { 
+      $.ajax({
+          url:"/nave_bar",
+          type: "POST",                            
+          dataType:'html',
+          success:function(data){                    
+    $(".left-navebar").html(data);
+    
+    $('#loading').fadeOut('slow');
+          }
+          })
+});
+   
+
+    </script>
+  </body>
+</html>

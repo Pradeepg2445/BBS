@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create Account - Bus Booking System</title>
+  <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="/base-css/login-signup.css" />
+  <link rel="stylesheet" href="/base-css/base.css" />
+  <link rel="stylesheet" href="/jquery-confirm/dist/jquery-confirm.min.css" />
+  <style>
+    body {
+      background-color: whitesmoke;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="loading">
+    <img id="loading-image" src="/images/loader.gif" alt="Loading..." />
+  </div>
+  <div id="loading2">
+    <b>
+      <br>
+      <br>
+      <br>
+      <br>Loading... </b>
+  </div>
+  <div class="jumbotron d-flex align-items-center min-vh-100">
+    <div class="container text-center">
+      <div class="middle-form" style=" width: 470px;">
+        <form action="/send-authMail" method="POST">
+          <center>
+            <h2 style="margin-bottom:15px;"><%= user  %> Sign Up </h2>
+          </center>
+          <span id="error" style="color: red;">Invalid OTP</span>
+          <br>
+          <div class="form-group">
+            <input type="text" class="form-control" name="name" id="name" placeholder="Name" required="required"
+              maxlength="25">
+          </div>
+          <div class="form-group">
+            <input type="tel" class="form-control" name="phone" id="phone" placeholder="Phone Number"
+              onblur="checkPhone(this.value.length)" maxlength="10"
+              oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required="required">
+          </div>
+          <div class="form-group">
+            <input type="email" class="form-control" name="email" id="email" placeholder="Email" required="required"
+              onblur="checkEmail()" maxlength="30">
+          </div>
+          <div class="form-group">
+            <span style="position: relative;">Username : </span>&ensp; <input type="text" id="username" readonly
+              maxlength="25">
+            <span id="otpBtnArea">
+              <button class="btn btn-success float-end  otpBtn" style="margin-right: 3px;
+              margin-bottom: 7px;" type="button" onclick="sendOtp()">Send OTP</button>
+            </span>
+          </div>
+          <div class="form-group otpArea">
+            <input type="number" class="form-control " name="otp" id="otp" placeholder="OTP" required="required"
+              onblur="otpValidate()"
+              oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');">
+          </div>
+          <div class="invalid-feedback"> OTP is wrong! </div>
+          <div class="valid-feedback"> Email verified! </div>
+          <div class="form-group">
+            <input type="password" class="form-control" name="password" id="password" placeholder="Password"
+              required="required" maxlength="16" onblur="checkPassword()">
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" name="repassword" id="repassword"
+              placeholder="confirm password " required="required" onblur="checkPassword()" maxlength="16">
+          </div>
+          <div class="form-group">
+            <textarea type="text" class="form-control" name="address" id="address"
+              onblur="checkAddress(this.value.length)" placeholder="Address" required="required"
+              maxlength="50"></textarea>
+          </div>
+          <div class="form-group">
+            <button type="button" class="btn btn-primary btn-block" style="width: 100%;" onclick="createAccount()">
+              <i class="fa fa-check" aria-hidden="true"></i>&ensp;Create Account </button>
+          </div>
+          <div class="clearfix">
+            <label class="pull-left checkbox-inline">
+              <a href="/login">Log in instead</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="/base-js/base.js"></script>
+  <script type="text/javascript" src="/jquery-confirm/dist/jquery-confirm.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#loading2').hide();
+      $("#error").hide();
+      $('#loading').fadeOut('slow');
+      $(".otpArea").hide();
+    });
+
+    function checkPhone(len) {
+      if (len != 10) {
+        $("phone").val("");
+        sm_warning("Alert!", "Please enter valid phone!");
+      }
+    }
+
+    function checkAddress(len) {
+      if (len < 5) {
+        $("#address").val("");
+        sm_warning("Alert!", "Please enter minimum 5 character!");
+      }
+    }
+
+    function sendOtp() {
+      $("#loading2").show();
+      $("#otp").val("");
+      let email = $("#email").val();
+      $.ajax({
+        url: "/send_otp",
+        type: "POST",
+        data: {
+          email: email
+        },
+        dataType: 'html',
+        success: function (data) {
+          if (data == 1) {
+            $(".otpArea").show();
+            sm_info("Success!", "OTP was send to your email! <br> Note: It only valid for this session!")
+          } else {
+            $(".otpArea").hide();
+          }
+          $("#loading2").fadeOut();
+        }
+      })
+    }
+
+    function checkEmail() {
+      $("#loading2").show();
+      let email = $("#email").val();
+      $.ajax({
+        url: "/checkEmail",
+        type: "POST",
+        data: {
+          email: email
+        },
+        dataType: 'html',
+        success: function (data) {
+          let dataObj = JSON.parse(data);
+          if (dataObj.validEmail == 1) {
+            $("#username").val(dataObj.username);
+          } else if (dataObj.validEmail == 0) {
+            $("#email").val("");
+            $("#username").val("");
+            sm_warning("Alert!", "Email Already Registered!");
+          } else {
+            $("#email").val("");
+            $("#username").val("");
+            sm_warning("Alert!", "Something went wrong!");
+          }
+          $("#loading2").fadeOut();
+        }
+      })
+    }
+
+    function checkPassword() {
+      let pasword = $("#password").val();
+      let repasword = $("#repassword").val();
+      if (pasword != repasword && pasword != "" && repasword != "") {
+        sm_warning("Alert!", "Password and confirm password does not match!");
+        $("#repassword").val('');
+      }
+    }
+
+    function otpValidate() {
+      let otp = $("#otp").val();
+      if (otp == "" || otp == null) return;
+
+      $('#loading2').show();
+      $.ajax({
+        url: "/check_otp",
+        type: "POST",
+        data: {
+          otp: otp
+        },
+        dataType: 'html',
+        success: function (data) {
+          if (data == 1) {
+            $("#error").hide();
+            $("#otpBtnArea").html(" <button class='btn btn-success' type = 'button'>Verified</button>");
+            $('#email').attr("disabled", true);
+            $(".otpArea").hide();
+            $("#email").addClass("is-valid");
+          } else {
+            $("#error").show();
+          }
+          $('#loading2').fadeOut();
+        }
+      })
+    }
+
+    function createAccount() {
+      //   var otp = $('input[name^=otp]').map(function(idx, elem) {
+      //   return $(elem).val();
+      // }).get();
+      let name = $("#name").val();
+      let phone = $("#phone").val();
+      let email = $("#email").val();
+      let password = $("#password").val();
+      let address = $("#address").val();
+      let username = $("#username").val();
+
+
+
+
+      if (name == "") {
+        sm_warning("Alert!", "Please enter the name!");
+        return;
+      } else if (phone == "") {
+        sm_warning("Alert!", "Please enter the phone number!");
+        return;
+      } else if (email == "") {
+        sm_warning("Alert!", "Please enter the email address!");
+        return;
+      } else if (password == "") {
+        sm_warning("Alert!", "Please enter the password!");
+        return;
+      } else if (address == "") {
+        sm_warning("Alert!", "Please enter the address!");
+        return;
+      } else {
+        $.ajax({
+          url: "/isEailVerified",
+          type: "POST",
+          dataType: 'html',
+          success: function (data) {
+            if (data == 0 || data == '0') {
+              sm_warning("Alert!", "Please verify your email!");
+              return;
+            }
+          }
+        })
+      }
+      $('#loading2').show();
+      $.ajax({
+        url: "/signup",
+        type: "POST",
+        data: {
+          name: name,
+          phone: phone,
+          email: email,
+          password: password,
+          address: address,
+          username: username
+        },
+        dataType: 'html',
+        success: function (data) {
+          if (data == 1 || data == '1') {
+            $('#loading').fadeIn('fast');
+            window.location.replace("<%=preUrl%>");
+          } else {
+            sm_warning("Alert!", "Something went wrong!");
+          }
+          $('#loading2').fadeOut();
+        }
+      })
+    }
+  </script>
+</body>
+
+</html>

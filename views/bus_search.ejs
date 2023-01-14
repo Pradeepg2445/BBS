@@ -1,0 +1,19 @@
+
+
+  
+    <% let val=data;  for(let i=0; i<Object.keys(val).length;i++){ %>
+    <tr>
+      <td><%=val[i].BUSID%></td>
+      <td><%=val[i].JOURNEY_DATE%></td>
+      <td><%=val[i].FROM_CITY%></td>
+      <td><%=val[i].TO_CITY%></td>
+      <td><%=val[i].COST%></td>
+      <td><%=val[i].AVAILABLE%></td>
+      <td style="text-align:center ;"><a href="/book/<%=val[i].JOURNEY_ID%>/<%=bestRoute%>"><button class="btn btn-primary btn-sm">Book</button></a></td>
+    </tr>
+    <% }  if(Object.keys(val).length==0) { %>
+        <!-- <tr>
+          <td  colspan="7" style="text-align: center;">	&#128531;&ensp;Sorry, Bus not Available!</td>
+          </tr> -->
+        
+      <% } %>
